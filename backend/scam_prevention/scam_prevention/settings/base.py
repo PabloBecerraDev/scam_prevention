@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,7 +58,25 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+
+
+
+# esto es para el login
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Usar JWT como método de autenticación
+    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',  # Requiere autenticación para las vistas
+    # ],
+}
+
 ROOT_URLCONF = 'scam_prevention.urls'
+
+
+
 
 
 
@@ -87,7 +107,7 @@ AUTHENTICATION_BACKENDS = [
 # this variable is for set the default model for the users
 #AUTH_USER_MODEL = 'Users.User'
 
-
+AUTH_USER_MODEL = 'usuarios.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

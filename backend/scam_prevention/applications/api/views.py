@@ -2,10 +2,15 @@ from django.shortcuts import render
 
 from django.http import JsonResponse
 from applications.usuarios.serializers import*
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from applications.usuarios.models import *
+from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
+
+
 
 
 @api_view(['POST'])
@@ -33,3 +38,73 @@ def getAllUsuarios(request):
     
     # Retornamos los datos serializados en la respuesta
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def crear_user(request):
+    print("aaa")
+    data = request.data
+
+    try:
+        print("aaa")
+        # Crear un usuario utilizando los datos recibidos
+        usuario = User(
+            username=data['username'],
+            nombre=data['nombre'],
+            apellido=data['apellido'],
+            edad=data['edad'],
+            imagen_perfil=data.get('imagen_perfil'),  # Usar get para evitar KeyError
+        )
+        # Establecer la contraseña correctamente
+        usuario.set_password(data['password'])
+        usuario.save()
+
+        # Serializar el usuario creado
+        serializer = UserSerializer(usuario)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    except KeyError as e:
+        return Response(
+            {"error": f"Falta el campo requerido: {str(e)}"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except Exception as e:
+        return Response(
+            {"error": "Ocurrió un error al crear el usuario.", "detalles": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    
+
+# Endpoint para el login
+@api_view(['POST'])
+def login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(username=username, password=password)
+    
+    if user:
+        # Si el usuario existe y las credenciales son correctas, generamos el token
+        from rest_framework_simplejwt.tokens import RefreshToken
+        
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),  # Token de acceso
+            'refresh': str(refresh),  # Token de refresco
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({'detail': 'Credenciales incorrectas'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def obtener_usuario_logueado(request):
+    user = request.user
+    return Response({
+        'username': user.username,
+        'nombre': user.first_name,
+        'apellido': user.last_name,
+        'edad': user.profile.age if hasattr(user, 'profile') else None,
+        'imagen_perfil': user.profile.image.url if hasattr(user, 'profile') and user.profile.image else None
+    })

@@ -5,31 +5,7 @@ from .models import Certificado, User, Tienda
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'nombre', 'apellido', 'edad', 'imagen_perfil', 'password']
-
-    def create(self, validated_data):
-        """
-        Crea y devuelve un nuevo usuario, asegurándose de que la contraseña esté correctamente cifrada.
-        """
-        password = validated_data.get('password')
-        user = User(**validated_data)
-        user.set_password(password)  # Hashea la contraseña antes de guardarla
-        user.save()
-        return user
-
-    def update(self, instance, validated_data):
-        """
-        Actualiza la información de un usuario, asegurando que la contraseña esté correctamente cifrada si es cambiada.
-        """
-        password = validated_data.get('password')
-        if password:
-            instance.set_password(password)
-        instance.nombre = validated_data.get('nombre', instance.nombre)
-        instance.apellido = validated_data.get('apellido', instance.apellido)
-        instance.edad = validated_data.get('edad', instance.edad)
-        instance.imagen_perfil = validated_data.get('imagen_perfil', instance.imagen_perfil)
-        instance.save()
-        return instance
+        fields = '__all__'
     
 
 
