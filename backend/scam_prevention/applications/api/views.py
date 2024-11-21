@@ -15,14 +15,21 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 @api_view(['POST'])
 def crearUsuarios(request):
-    # Creamos un nuevo serializador con los datos de la petición
-    serializer = UserSerializer(data = request.data)
+     # Extraemos los datos de la solicitud
+    data = request.data.copy()  # Hacemos una copia para poder modificarla
+
+    # Modificamos los datos antes de pasarlos al serializador
+    data['is_active'] = True  # Establecemos is_active a True
+    data['password'] = make_password(data['password'])  # Hasheamos la contraseña
+
+    # Creamos un nuevo serializador con los datos modificados
+    serializer = UserSerializer(data=data)
     
-    # Verificamos si los datos son válidos según las reglas definidas en el serializador
+    # Verificamos si los datos son validos según las reglas definidas en el serializador
     if serializer.is_valid():
         # Si los datos son válidos, creamos el usuario
         serializer.save()
-        return Response({'message': 'Usuario creado con éxito.'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Usuario creado con exito.'}, status=status.HTTP_201_CREATED)
     
     # Si los datos no son válidos, respondemos con los errores de validación
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { AuthProvider } from "./authContext";
+import { AuthProvider } from "./AuthContext";
 import LoginForm from "./components/LoginForm";
 
 function App() {

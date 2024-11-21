@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from unipath import Path
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).ancestor(3)
@@ -71,6 +73,14 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',  # Requiere autenticación para las vistas
     # ],
+}
+
+#esto es para que la sesion no se cierre sola, refresca el JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Cambia a la duración que prefieras
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Configura la duración del token de refresco
+    'ROTATE_REFRESH_TOKENS': True,  # Renueva el token de refresco cada vez que se use
+    'BLACKLIST_AFTER_ROTATION': True,  # Invalida el token anterior al renovar
 }
 
 ROOT_URLCONF = 'scam_prevention.urls'

@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import LoginForm from './components/LoginForm';
+import TypingEffect from "./components/TypingEffect";
 
 // Componente de tarjeta animada
 const AnimatedCard = styled(Card)({
@@ -28,6 +29,12 @@ const AnimatedCard = styled(Card)({
   },
 });
 
+const titles = [
+  "Bienvenido a nuestra página.",
+  "Explora nuestras herramientas.",
+  "Evita ser estafado en línea."
+];
+
 // Página principal (Home)
 function Home() {
   return (
@@ -35,7 +42,12 @@ function Home() {
       {/* Sección introductoria */}
       <Box sx={{ my: 5 }}>
         <Typography variant="h4" gutterBottom>
-          Evita ser estafado en tiendas virtuales
+          <TypingEffect 
+            titles={titles} 
+            typingSpeed={100} 
+            pauseTime={1500} 
+            delayBeforeDelete={2000} 
+          />
         </Typography>
         <Typography variant="body1" gutterBottom>
           Las estafas en marketplaces son cada vez más comunes. Estas pueden incluir precios
@@ -81,9 +93,52 @@ function Home() {
           </AnimatedCard>
         </Grid>
       </Grid>
+
+      {/* Nueva sección: Certificación de vendedores */}
+      <Box sx={{ mt: 10 }}>
+        <Typography variant="h5" gutterBottom>
+          Certificación de vendedores
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Los vendedores pueden solicitar un certificado para demostrar su confiabilidad.
+          Este procedimiento incluye la verificación de identidad y el historial de transacciones.
+        </Typography>
+        <Button variant="contained" color="primary">
+          Solicitar certificado
+        </Button>
+      </Box>
+
+      {/* Nueva sección: Verificación de base de datos */}
+      <Box sx={{ mt: 10 }}>
+        <Typography variant="h5" gutterBottom>
+          Verificación de vendedores certificados
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Los compradores pueden acceder a nuestra base de datos para verificar si un vendedor
+          está certificado antes de realizar una transacción.
+        </Typography>
+        <Button variant="contained" color="secondary">
+          Verificar base de datos
+        </Button>
+      </Box>
+
+      {/* Nueva sección: Guía descargable */}
+      <Box sx={{ mt: 10 }}>
+        <Typography variant="h5" gutterBottom>
+          Guía para evitar estafas
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Descarga nuestra guía completa con pasos y recomendaciones para evitar ser estafado
+          en marketplaces.
+        </Typography>
+        <Button variant="contained" color="success">
+          Descargar guía
+        </Button>
+      </Box>
     </Container>
   );
 }
+
 
 // Barra de navegación dinámica basada en el estado del usuario
 function Navbar() {

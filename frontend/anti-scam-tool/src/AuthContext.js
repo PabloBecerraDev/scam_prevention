@@ -7,6 +7,44 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
+  
+  //esto es para que la sesion no se cierre sola, refresca el JWT
+  const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) {
+      logout();
+      return;
+    }
+  
+    try {
+      const response = await axios.post("http://localhost:8000/api/token/refresh/", {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      localStorage.setItem("token", newAccessToken);
+      axios.defaults.headers["Authorization"] = `Bearer ${newAccessToken}`;
+    } catch (error) {
+      console.error("Error al renovar el token:", error);
+      logout();
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+  
+    if (token) {
+      setIsAuthenticated(true);
+      axios.defaults.headers["Authorization"] = `Bearer ${token}`;
+    }
+  
+    const interval = setInterval(() => {
+      refreshAccessToken();
+    }, 4 * 60 * 1000); // Intenta renovar cada 4 minutos (antes de que expire el token)
+  
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
