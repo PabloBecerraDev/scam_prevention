@@ -2,8 +2,9 @@ import React,{ createContext, useState, useEffect, useContext }from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import UserForm from './components/UserForm';
+import TiendaForm from './components/tiendaForm';
 import { AuthProvider, useAuth } from './AuthContext';
-
+import CertificacionButton from './components/CertificacionButton';
 
 import {
   AppBar,
@@ -44,7 +45,7 @@ function Home() {
         <Typography variant="h4" gutterBottom>
           <TypingEffect 
             titles={titles} 
-            typingSpeed={100} 
+            typingSpeed={50} 
             pauseTime={1500} 
             delayBeforeDelete={2000} 
           />
@@ -103,9 +104,7 @@ function Home() {
           Los vendedores pueden solicitar un certificado para demostrar su confiabilidad.
           Este procedimiento incluye la verificación de identidad y el historial de transacciones.
         </Typography>
-        <Button variant="contained" color="primary">
-          Solicitar certificado
-        </Button>
+        <CertificacionButton /> {/* Usar el nuevo componente */}
       </Box>
 
       {/* Nueva sección: Verificación de base de datos */}
@@ -116,6 +115,19 @@ function Home() {
         <Typography variant="body1" gutterBottom>
           Los compradores pueden acceder a nuestra base de datos para verificar si un vendedor
           está certificado antes de realizar una transacción.
+        </Typography>
+        <Button variant="contained" color="secondary">
+          Verificar base de datos
+        </Button>
+      </Box>
+
+      {/* Nueva sección: Verificación de base de datos */}
+      <Box sx={{ mt: 10 }}>
+        <Typography variant="h5" gutterBottom>
+          Inscribe tu tienda
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Los compradores pueden acceder a nuestra base de datos para verificar una tienda esta verificada.
         </Typography>
         <Button variant="contained" color="secondary">
           Verificar base de datos
@@ -150,9 +162,6 @@ function Navbar() {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Anti-Scam Tool
         </Typography>
-        <Button color="inherit" component={Link} to="/">
-          Inicio
-        </Button>
         {!isAuthenticated ? (
           <>
             <Button color="inherit" component={Link} to="/create-account">
@@ -167,11 +176,34 @@ function Navbar() {
             <Typography variant="body1" sx={{ mr: 2 }}>
               {`Hola, ${user?.username || "Usuario"}`}
             </Typography>
+            
+            {/* Condicional para ver solicitudes si es superuser */}
+            {user?.is_superuser && (
+              <Button color="inherit" component={Link} to="/ver-solicitudes">
+                Ver Solicitudes
+              </Button>
+            )}
+  
+            {/* Condicional para ver certificado y agregar tienda si no es superuser */}
+            {!user?.is_superuser && (
+              <>
+                <Button color="inherit" component={Link} to="/ver-certificado">
+                  Ver Certificado
+                </Button>
+                <Button color="inherit" component={Link} to="/crearTienda">
+                  Agregar Tienda
+                </Button>
+              </>
+            )}
+  
             <Button color="inherit" onClick={logout}>
               Logout
             </Button>
           </>
         )}
+        <Button color="inherit" component={Link} to="/">
+          Inicio
+        </Button>
       </Toolbar>
     </AppBar>
   );
@@ -187,6 +219,9 @@ function App() {
           <Route path="/" element={<Home />} />
           
           {/* Rutas protegidas: solo accesibles si NO está logueado */}
+
+          <Route path="/crearTienda" element={<TiendaForm />} />
+
           <Route 
             path="/create-account" 
             element={
@@ -204,7 +239,9 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
         </Routes>
+        
       </Router>
     </AuthProvider>
   );

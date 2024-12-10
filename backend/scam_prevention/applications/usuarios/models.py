@@ -7,10 +7,16 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     # Campos adicionales
+
+
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     edad = models.IntegerField()
     imagen_perfil = models.ImageField(upload_to="profile_images", blank=True, null=True)
+    tipoDocument = models.CharField(max_length = 20, default = "N/A")
+    documentoId = models.CharField(max_length = 20, default = "000")
+
+    is_certifiqued = models.BooleanField(default = False)
 
     # Campos para autenticación
     REQUIRED_FIELDS = ['nombre', 'apellido', 'edad']  # Campos adicionales requeridos para el superusuario
@@ -51,3 +57,8 @@ class Certificado(models.Model):
 
     def __str__(self) -> str:
         return str(self.id) + " - " + self.usuario.getNombreCompleto()
+
+
+
+class SolicitudCertificado(models.Model):
+    pass

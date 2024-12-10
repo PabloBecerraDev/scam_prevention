@@ -9,40 +9,46 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 
-class TiendaSerializer(serializers.ModelSerializer):
-    dueno = UserSerializer()  # Se incluye el serializador de User para la relación
+# class TiendaSerializer(serializers.ModelSerializer):
+#     dueno = UserSerializer()  # Se incluye el serializador de User para la relación
 
+#     class Meta:
+#         model = Tienda
+#         fields = ['dueno', 'nombre', 'ciudad', 'direccion', 'descripcion']
+
+#     def create(self, validated_data):
+#         """
+#         Crea y devuelve una nueva tienda. El campo `dueno` se crea con el serializador del modelo User.
+#         """
+#         dueno_data = validated_data.pop('dueno')  # Se extrae la información del dueño (User)
+#         dueno = User.objects.create(**dueno_data)  # Se crea el User si no existe
+#         tienda = Tienda.objects.create(dueno=dueno, **validated_data)
+#         return tienda
+
+#     def update(self, instance, validated_data):
+#         """
+#         Actualiza la información de una tienda.
+#         """
+#         dueno_data = validated_data.get('dueno')
+#         if dueno_data:
+#             instance.dueno.nombre = dueno_data.get('nombre', instance.dueno.nombre)
+#             instance.dueno.apellido = dueno_data.get('apellido', instance.dueno.apellido)
+#             instance.dueno.save()
+#         instance.nombre = validated_data.get('nombre', instance.nombre)
+#         instance.ciudad = validated_data.get('ciudad', instance.ciudad)
+#         instance.direccion = validated_data.get('direccion', instance.direccion)
+#         instance.descripcion = validated_data.get('descripcion', instance.descripcion)
+#         instance.save()
+#         return instance
+    
+#     def delete(self, instance, validated_data):
+#         pass
+
+
+class TiendaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tienda
-        fields = ['dueno', 'nombre', 'ciudad', 'direccion', 'descripcion']
-
-    def create(self, validated_data):
-        """
-        Crea y devuelve una nueva tienda. El campo `dueno` se crea con el serializador del modelo User.
-        """
-        dueno_data = validated_data.pop('dueno')  # Se extrae la información del dueño (User)
-        dueno = User.objects.create(**dueno_data)  # Se crea el User si no existe
-        tienda = Tienda.objects.create(dueno=dueno, **validated_data)
-        return tienda
-
-    def update(self, instance, validated_data):
-        """
-        Actualiza la información de una tienda.
-        """
-        dueno_data = validated_data.get('dueno')
-        if dueno_data:
-            instance.dueno.nombre = dueno_data.get('nombre', instance.dueno.nombre)
-            instance.dueno.apellido = dueno_data.get('apellido', instance.dueno.apellido)
-            instance.dueno.save()
-        instance.nombre = validated_data.get('nombre', instance.nombre)
-        instance.ciudad = validated_data.get('ciudad', instance.ciudad)
-        instance.direccion = validated_data.get('direccion', instance.direccion)
-        instance.descripcion = validated_data.get('descripcion', instance.descripcion)
-        instance.save()
-        return instance
-    
-    def delete(self, instance, validated_data):
-        pass
+        fields = ['id', 'dueno', 'nombre', 'ciudad', 'direccion', 'descripcion']
     
 
 class CertificadoSerializer(serializers.ModelSerializer):
@@ -75,3 +81,5 @@ class CertificadoSerializer(serializers.ModelSerializer):
         instance.clave_privada_pem = validated_data.get('clave_privada_pem', instance.clave_privada_pem)
         instance.save()
         return instance
+
+

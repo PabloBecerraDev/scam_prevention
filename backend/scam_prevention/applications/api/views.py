@@ -47,6 +47,42 @@ def getAllUsuarios(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])  # O cambia a IsAuthenticated si solo usuarios autenticados deben acceder
+def getTiendaUsuLogeado(request):
+    user = request.user  # Usuario autenticado o AnonymousUser
+    print(user.username)
+    # Verificar si el usuario está autenticado
+    if not user.is_authenticated:
+        return Response({
+            "detail": "Authentication credentials were not provided or invalid.",
+            "has_store": False,
+            "store": None
+        }, status=401)
+
+    tienda = Tienda.objects.filter(dueno=user).first()  # Obtiene la tienda asociada, si existe
+
+    if tienda:
+        print("si tiene tienda")
+        return Response({
+            "has_store": True,
+            "store": {
+                "id": tienda.id,
+                "nombre": tienda.nombre,
+                "ciudad": tienda.ciudad,
+                "direccion": tienda.direccion,
+                "descripcion": tienda.descripcion,
+            }
+        })
+    else:
+        print("algo paso o no tiene tienda")
+        return Response({
+            "has_store": False,
+            "store": None
+        })
+
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -113,5 +149,25 @@ def obtener_usuario_logueado(request):
         'nombre': user.first_name,
         'apellido': user.last_name,
         'edad': user.profile.age if hasattr(user, 'profile') else None,
-        'imagen_perfil': user.profile.image.url if hasattr(user, 'profile') and user.profile.image else None
+        'imagen_perfil': user.profile.image.url if hasattr(user, 'profile') and user.profile.image else None,
+        'is_superuser': user.is_superuser
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Asegura que el usuario esté autenticado
+def crear_tienda(request):
+    user = request.user
+    data = request.data
+    data['dueno'] = user.id
+    print(user.id)  # Ahora debería mostrar el ID del usuario autenticado
+
+    # Validar y guardar la tienda
+    try:
+        tienda_serializer = TiendaSerializer(data=data)
+        if tienda_serializer.is_valid():
+            tienda_serializer.save()
+            return Response({"message": "Tienda creada exitosamente"}, status=201)
+        return Response(tienda_serializer.errors, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)

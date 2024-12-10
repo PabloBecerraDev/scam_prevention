@@ -77,10 +77,10 @@ REST_FRAMEWORK = {
 
 #esto es para que la sesion no se cierre sola, refresca el JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Cambia a la duración que prefieras
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Configura la duración del token de refresco
-    'ROTATE_REFRESH_TOKENS': True,  # Renueva el token de refresco cada vez que se use
-    'BLACKLIST_AFTER_ROTATION': True,  # Invalida el token anterior al renovar
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,   
 }
 
 ROOT_URLCONF = 'scam_prevention.urls'
